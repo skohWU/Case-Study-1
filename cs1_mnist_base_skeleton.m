@@ -27,7 +27,7 @@ train=train(:,1:784);
 train(:,785)=zeros(1500,1);
 
 % testing set (200 images with 11 outliers)
-test=csvread('mnist_test_200_woutliers.csv');
+test=csvread('mnist_test_200.csv');
 % store the correct test labels
 correctlabels = test(:,785);
 test=test(:,1:784);
@@ -62,8 +62,8 @@ imagesc(testimage'); % this command plots an array as an image.  Type 'help imag
 
 %% This next section of code calls the three functions you are asked to specify
 
-k= ; % set k
-max_iter= ; % set the number of iterations of the algorithm
+k = 20; % set k
+max_iter = 10; % set the number of iterations of the algorithm
 
 %% The next line initializes the centroids.  Look at the initialize_centroids()
 % function, which is specified further down this file.
@@ -77,8 +77,17 @@ cost_iteration = zeros(max_iter, 1);
 %% This for-loop enacts the k-means algorithm
 
 for iter=1:max_iter
-    
-      % FILL THIS IN!
+    total_cost = 0;
+
+    for i = 1:size(train,1)
+
+        [index, vec_distance] = assign_vector_to_centroid(train(i,:), centroids);
+        train(i,785) = index;
+        total_cost = total_cost + vec_distance;
+    end
+
+    cost_iteration(iter) = total_cost / length(train);
+    centroids = update_Centroids(train,k);
     
 end
 
@@ -100,7 +109,7 @@ plotsize = ceil(sqrt(k));
 
 for ind=1:k
     
-    centr=centroids(ind,[1:784]);
+    centr=centroids(ind,(1:784));
     subplot(plotsize,plotsize,ind);
     
     imagesc(reshape(centr,[28 28])');
@@ -131,7 +140,14 @@ end
 
 function [index, vec_distance] = assign_vector_to_centroid(data,centroids)
 
-% FILL THIS IN
+    num_centroids = size(centroids, 1);
+    distances = zeros(num_centroids: 1);
+    
+    for i = 1:num_centroids
+        distances(i) = norm(data(1:784) - centroids(i, (1:784)))^2;
+    end
+    
+    [vec_distance, index] = min(distances);
 
 end
 
@@ -141,8 +157,16 @@ end
 % It returns a new set of centroids based on the current assignment of the
 % training images.
 
-function new_centroids=update_Centroids(data,K)
+function new_centroids=update_Centroids(data,k)
 
-% FILL THIS IN
+    new_centroids = zeros(k, size(data, 2) - 1);
+    
+    for i = 1:k
+        assinged_vectors = data(data(:, 785) == i, 1:784);
+    
+        if ~isempty(assinged_vectors)
+            new_centroids(i, 1:end) = mean(assinged_vectors, 1);
+        end
+    end
 
 end
