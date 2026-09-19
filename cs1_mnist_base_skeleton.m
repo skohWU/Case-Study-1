@@ -78,14 +78,11 @@ cost_iteration = zeros(max_iter, 1);
 
 for iter=1:max_iter
     total_cost = 0;
-
     for i = 1:size(train,1)
-
         [index, vec_distance] = assign_vector_to_centroid(train(i,:), centroids);
         train(i,785) = index;
         total_cost = total_cost + vec_distance;
     end
-
     cost_iteration(iter) = total_cost / length(train);
 
 % Checks to see if there would be no change in centroid and stops
@@ -100,6 +97,17 @@ for iter=1:max_iter
 end
 
 disp("Ended after " + iter + " iterations.");
+
+%% Classifying Centroids
+
+centroidLabels = zeros(k, 1);
+for clusterIndex = 1:k
+    clusterLabels = train(train(:,785) == clusterIndex, 785);
+    if ~isempty(clusterLabels)
+        centroidLabels(clusterIndex) = mode(trainsetlabels(train(:,785) == clusterIndex));
+    end
+    disp("Centroid " + clusterIndex + " corresponds to " + centroidLabels(clusterIndex))
+end
 
 
 %% This section of code plots the k-means cost as a function of the number
