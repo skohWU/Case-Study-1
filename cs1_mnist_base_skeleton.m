@@ -63,7 +63,7 @@ imagesc(testimage'); % this command plots an array as an image.  Type 'help imag
 %% This next section of code calls the three functions you are asked to specify
 
 k = 20; % set k
-max_iter = 10; % set the number of iterations of the algorithm
+max_iter = 200; % set the number of maximum potential iterations of the algorithm
 
 %% The next line initializes the centroids.  Look at the initialize_centroids()
 % function, which is specified further down this file.
@@ -87,15 +87,27 @@ for iter=1:max_iter
     end
 
     cost_iteration(iter) = total_cost / length(train);
-    centroids = update_Centroids(train,k);
+
+% Checks to see if there would be no change in centroid and stops
+% iterating.
+
+    if isequal(centroids, update_Centroids(train,k))
+        break
+    else
+        centroids = update_Centroids(train,k);
+    end
     
 end
+
+disp("Ended after " + iter + " iterations.");
+
 
 %% This section of code plots the k-means cost as a function of the number
 % of iterations
 
 figure;
-% FILL THIS IN!
+cost_iteration = cost_iteration(cost_iteration ~= 0);
+plot(1:iter, cost_iteration);
 
 
 %% This next section of code will make a plot of all of the centroids
@@ -144,7 +156,7 @@ function [index, vec_distance] = assign_vector_to_centroid(data,centroids)
     distances = zeros(num_centroids: 1);
     
     for i = 1:num_centroids
-        distances(i) = norm(data(1:784) - centroids(i, (1:784)))^2;
+        distances(i) = norm(data(1:784) - centroids(i, (1:784)));
     end
     
     [vec_distance, index] = min(distances);
