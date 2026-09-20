@@ -14,11 +14,8 @@
 
 load('classifierdata.mat', "centroids", "centroidLabels");
 
-<<<<<<< HEAD
 test=csvread('mnist_test_200.csv');
 correctlabels = test(:,785);
-=======
->>>>>>> 8bb700b649db05bde27bca5fd9358af2f848695e
 
 predictions = zeros(200,1);
 outliers = zeros(200,1);
