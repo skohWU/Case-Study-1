@@ -27,6 +27,7 @@ testing_vector=test(i,:);
 
 % Extract the centroid that is closest to the test image
 [prediction_index, vec_distance]=assign_vector_to_centroid(testing_vector,centroids);
+test(i,785) = prediction_index;
 
 predictions(i) = centroidLabels(prediction_index);
 
@@ -37,15 +38,28 @@ end
 % outliers(i) should be set to 1 if the i^th entry is an outlier
 % otherwise, outliers(i) should be 0
 
+% Creates a vector with the mean distances of each cluster to it's centroid
 mean_Distance = zeros(size(centroids,1),1);
+outlier_threshold = 1.3;
 
 for i = 1:size(centroids,1)
-    for j = 1:sum(test(:, 785) == i)
-         mean_Distance(i, :) = mean_Distance(i, :) + norm(test(j,test(785) == i), centroids)/sum(test(:, 785) == i);
+    cluster = test(test(:, 785) == i, 1:784);
+    distances = zeros(size(cluster,1), 1);
+    for j = 1:size(cluster, 1)
+        distances(j) = norm(cluster(j, :) - centroids(i, :));
+    end
+    mean_Distance(i) = mean(distances);
+end
+
+for i = 1:size(test, 1)
+    distance_to_cetroid = norm(test(i,1:784) - centroids(test(i,785), :));
+    if distance_to_cetroid > outlier_threshold * mean_Distance(test(i,785))
+        outliers(i) = 1;
     end
 end
 
-mean_Distance = zeros((sizeCentroids:1));
+
+disp("Outliers: " + sum(outliers));
 
 
 %% MAKE A STEM PLOT OF THE OUTLIER FLAG
@@ -61,7 +75,7 @@ plot(predictions,'x');
 title('Predictions');
 
 %% The following line provides the number of instances where and entry in correctlabel is
-% equatl to the corresponding entry in prediction
+% equal to the corresponding entry in prediction
 % However, remember that some of these are outliers
 sum(correctlabels==predictions)
 
