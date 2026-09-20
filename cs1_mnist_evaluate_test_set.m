@@ -14,8 +14,11 @@
 
 load('classifierdata.mat', "centroids", "centroidLabels");
 
+<<<<<<< HEAD
 test=csvread('mnist_test_200.csv');
 correctlabels = test(:,785);
+=======
+>>>>>>> 8bb700b649db05bde27bca5fd9358af2f848695e
 
 predictions = zeros(200,1);
 outliers = zeros(200,1);
@@ -37,6 +40,7 @@ end
 % outliers(i) should be set to 1 if the i^th entry is an outlier
 % otherwise, outliers(i) should be 0
 
+<<<<<<< HEAD
 mean_Distance = zeros(size(centroids,1),1);
 
 for i = 1:size(centroids,1)
@@ -44,6 +48,10 @@ for i = 1:size(centroids,1)
          mean_Distance(i, :) = mean_Distance(i, :) + norm(test(j,test(785) == i), centroids)/sum(test(:, 785) == i);
     end
 end
+=======
+mean_Distance = zeros((sizeCentroids:1));
+
+>>>>>>> 8bb700b649db05bde27bca5fd9358af2f848695e
 
 %% MAKE A STEM PLOT OF THE OUTLIER FLAG
 figure;
