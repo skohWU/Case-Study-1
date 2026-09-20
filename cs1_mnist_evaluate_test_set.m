@@ -12,6 +12,9 @@
 % You should save 1) and 2) in a file named 'classifierdata.mat' as part of
 % your submission.
 
+load('classifierdata.mat', "centroids", "centroidLabels");
+
+
 predictions = zeros(200,1);
 outliers = zeros(200,1);
 
@@ -23,14 +26,17 @@ testing_vector=test(i,:);
 % Extract the centroid that is closest to the test image
 [prediction_index, vec_distance]=assign_vector_to_centroid(testing_vector,centroids);
 
-predictions(i) = centroid_labels(prediction_index);
+predictions(i) = centroidLabels(prediction_index);
+
 
 end
 
 %% DESIGN AND IMPLEMENT A STRATEGY TO SET THE outliers VECTOR
 % outliers(i) should be set to 1 if the i^th entry is an outlier
 % otherwise, outliers(i) should be 0
-% FILL IN
+
+mean_Distance = zeros((sizeCentroids:1));
+
 
 %% MAKE A STEM PLOT OF THE OUTLIER FLAG
 figure;
@@ -50,6 +56,15 @@ title('Predictions');
 sum(correctlabels==predictions)
 
 function [index, vec_distance] = assign_vector_to_centroid(data,centroids)
-% FILL IN
+    num_centroids = size(centroids, 1);
+    distances = zeros(num_centroids: 1);
+
+    for i = 1:num_centroids
+        distances(i) = norm(data(1:784) - centroids(i, (1:784)));
+    end
+
+    [vec_distance, index] = min(distances);
+
 end
+
 
