@@ -62,7 +62,7 @@ imagesc(testimage'); % this command plots an array as an image.  Type 'help imag
 
 %% This next section of code calls the three functions you are asked to specify
 
-k = 20; % set k
+k = 23; % set k
 max_iter = 200; % set the number of maximum potential iterations of the algorithm
 
 %% The next line initializes the centroids.  Look at the initialize_centroids()
@@ -109,6 +109,7 @@ for clusterIndex = 1:k
     disp("Centroid " + clusterIndex + " corresponds to " + centroidLabels(clusterIndex))
 end
 
+save('classifierdata.mat', "centroids", "centroidLabels");
 
 %% This section of code plots the k-means cost as a function of the number
 % of iterations
