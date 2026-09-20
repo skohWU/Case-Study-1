@@ -30,7 +30,8 @@ end
 %% DESIGN AND IMPLEMENT A STRATEGY TO SET THE outliers VECTOR
 % outliers(i) should be set to 1 if the i^th entry is an outlier
 % otherwise, outliers(i) should be 0
-% FILL IN
+
+
 
 %% MAKE A STEM PLOT OF THE OUTLIER FLAG
 figure;
@@ -50,6 +51,13 @@ title('Predictions');
 sum(correctlabels==predictions)
 
 function [index, vec_distance] = assign_vector_to_centroid(data,centroids)
-% FILL IN
+    num_centroids = size(centroids, 1);
+    distances = zeros(num_centroids: 1);
+    
+    for i = 1:num_centroids
+        distances(i) = norm(data(1:784) - centroids(i, (1:784)));
+    end
+    
+    [vec_distance, index] = min(distances);
 end
 
