@@ -62,7 +62,7 @@ imagesc(testimage'); % this command plots an array as an image.  Type 'help imag
 
 %% This next section of code calls the three functions you are asked to specify
 
-k = 23; % set k
+k = 30; % set k
 max_iter = 200; % set the number of maximum potential iterations of the algorithm
 
 %% The next line initializes the centroids.  Look at the initialize_centroids()
@@ -110,6 +110,21 @@ for clusterIndex = 1:k
 end
 
 save('classifierdata.mat', "centroids", "centroidLabels");
+%% Tests centroids against training set labels
+
+% loop through the test set, figure out the predicted number
+for i = 1:size(train(:,1),1)
+
+    training_vector=train(i,1:784);
+
+    % Extract the centroid that is closest to the test image
+    [prediction_index, vec_distance]=assign_vector_to_centroid(training_vector,centroids);
+
+    predictions(i,1) = centroidLabels(prediction_index);
+
+end
+
+disp("Correct labels: " + sum(trainsetlabels==predictions));
 
 %% This section of code plots the k-means cost as a function of the number
 % of iterations
@@ -153,6 +168,10 @@ centroids=data(random_index(1:num_centroids),:);
 y=centroids;
 
 end
+
+
+
+
 
 %% Function to pick the Closest Centroid using norm/distance
 % This function takes two arguments, a vector and a set of centroids
