@@ -64,7 +64,10 @@ disp("Outliers: " + sum(outliers));
 
 %% MAKE A STEM PLOT OF THE OUTLIER FLAG
 figure;
-% FILL IN
+stem(outliers);
+title('Outlier Flags');
+xlabel('Test Image');
+ylabel('Outlier Flag');
 
 %% The following plots the correct and incorrect predictions
 % Make sure you understand how this plot is constructed
