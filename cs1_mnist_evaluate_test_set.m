@@ -61,6 +61,23 @@ end
 
 disp("Outliers: " + sum(outliers));
 
+%% Creates figure with all misclassified images
+misclassified = test(predictions(:) ~= correctlabels(:),1:784);
+
+figure;
+colormap('gray');
+
+plotsize = ceil(sqrt(size(misclassified(),1)));
+
+for ind = 1:size(misclassified(),1)
+    image = misclassified(ind,(1:784));
+    subplot(plotsize,plotsize,ind);
+
+    imagesc(reshape(image,[28 28])');
+    title(strcat('Classified as ', num2str(predictions(ind))))
+end
+
+
 
 %% MAKE A STEM PLOT OF THE OUTLIER FLAG
 figure;

@@ -62,69 +62,102 @@ imagesc(testimage'); % this command plots an array as an image.  Type 'help imag
 
 %% This next section of code calls the three functions you are asked to specify
 
-k = 30; % set k
-max_iter = 200; % set the number of maximum potential iterations of the algorithm
+ k = 28; % set k
+max_iter = 100; % set the number of maximum potential iterations of the algorithm
 
 %% The next line initializes the centroids.  Look at the initialize_centroids()
 % function, which is specified further down this file.
 
-centroids=initialize_centroids(train,k);
+
 
 %% Initialize an array that will store k-means cost at each iteration
 
-cost_iteration = zeros(max_iter, 1);
+ % minK = 20;
+ % maxK = 100;
+ % accuracies = zeros(maxK, 2);
+ % timeElapsed = zeros(maxK, 1);
+
+ predictions = zeros(size(train,1), 1);
+% accuracies = zeros(maxK-minK,2);
 
 %% This for-loop enacts the k-means algorithm
+   % for k = minK:maxK 
+   %     tic;
+       cost_iteration = zeros(max_iter, 1);
+       centroids=initialize_spaced_centroids(train,k);
 
-for iter=1:max_iter
-    total_cost = 0;
-    for i = 1:size(train,1)
-        [index, vec_distance] = assign_vector_to_centroid(train(i,:), centroids);
-        train(i,785) = index;
-        total_cost = total_cost + vec_distance;
-    end
-    cost_iteration(iter) = total_cost / length(train);
 
-% Checks to see if there would be no change in centroid and stops
-% iterating.
 
-    if isequal(centroids, update_Centroids(train,k))
-        break
-    else
-        centroids = update_Centroids(train,k);
+
+    for iter=1:max_iter
+        total_cost = 0;
+        for i = 1:size(train,1)
+            [index, vec_distance] = assign_vector_to_centroid(train(i,:), centroids);
+            train(i,785) = index;
+            total_cost = total_cost + vec_distance;
+        end
+        cost_iteration(iter) = total_cost / length(train);
+    
+    % Checks to see if there would be no change in centroid and stops
+    % iterating.
+    
+        if isequal(centroids, update_Centroids(train,k))
+            break
+        else
+            centroids = update_Centroids(train,k);
+        end
+        
     end
     
-end
-
-disp("Ended after " + iter + " iterations.");
-
-%% Classifying Centroids
-
-centroidLabels = zeros(k, 1);
-for clusterIndex = 1:k
-    clusterLabels = train(train(:,785) == clusterIndex, 785);
-    if ~isempty(clusterLabels)
-        centroidLabels(clusterIndex) = mode(trainsetlabels(train(:,785) == clusterIndex));
+    disp("Ended after " + iter + " iterations.");
+    
+    
+    %% Classifying Centroids
+    
+    centroidLabels = zeros(k, 1);
+    for clusterIndex = 1:k
+        clusterLabels = train(train(:,785) == clusterIndex, 785);
+        if ~isempty(clusterLabels)
+            centroidLabels(clusterIndex) = mode(trainsetlabels(train(:,785) == clusterIndex));
+        end
+        %disp("Centroid " + clusterIndex + " corresponds to " + centroidLabels(clusterIndex))
     end
-    disp("Centroid " + clusterIndex + " corresponds to " + centroidLabels(clusterIndex))
-end
+    
+    save('classifierdata.mat', "centroids", "centroidLabels");
+    %% Tests centroids against training set labels
+    
+    % loop through the test set, figure out the predicted number
+    for i = 1:size(train(:,1),1)
+    
+        training_vector=train(i,1:784);
+    
+        % Extract the centroid that is closest to the test image
+        [prediction_index, vec_distance]=assign_vector_to_centroid(training_vector,centroids);
+    
+        predictions(i,1) = centroidLabels(prediction_index);
+    
+    end
+    % disp("Accuracy: " + sum(trainsetlabels==predictions)/size(train,1));
+    % accuracies(k,1) = k;
+    % accuracies(k,2) = sum(trainsetlabels==predictions)/size(train,1);
+    % timeElapsed(k) = toc;
+   % end % end of k testing for loop
 
-save('classifierdata.mat', "centroids", "centroidLabels");
-%% Tests centroids against training set labels
-
-% loop through the test set, figure out the predicted number
-for i = 1:size(train(:,1),1)
-
-    training_vector=train(i,1:784);
-
-    % Extract the centroid that is closest to the test image
-    [prediction_index, vec_distance]=assign_vector_to_centroid(training_vector,centroids);
-
-    predictions(i,1) = centroidLabels(prediction_index);
-
-end
-
-disp("Correct labels: " + sum(trainsetlabels==predictions));
+    % figure
+    % plot(timeElapsed(minK:maxK));
+    % xlabel('Loop Iteration');
+    % ylabel('Time (seconds)');
+    % title('Computing Time per k');
+    % 
+    % figure
+    % plot(accuracies(minK:maxK,1),accuracies(minK:maxK,2))
+    % xlabel('Loop Iteration');
+    % ylabel('Accuracy');
+    % title('Accuracy per k');
+    % 
+    % writematrix(accuracies, 'accuracies.csv');
+    % 
+    % writematrix(timeElapsed, 'timeElapsed.csv');
 
 %% This section of code plots the k-means cost as a function of the number
 % of iterations
@@ -169,9 +202,28 @@ y=centroids;
 
 end
 
+%% Initialize the centroids with k-mean++ algorithm
 
+function centroids = initialize_spaced_centroids(data, num_centroids)
 
+centroids = zeros(num_centroids,784);
 
+centroids(1,:) = data(randi(size(data, 1)), 1:784);
+
+for i = 2:num_centroids
+    distances = pdist2(data(:,1:784), centroids(1:i-1,:),"squaredeuclidean");
+    minimum_distance = min(distances, [], 2);
+    probabiblities = minimum_distance / sum(minimum_distance);
+
+    cumaltive_distribution = cumsum(probabiblities);
+    random_prob = rand();
+    next_centroid_index = find(cumaltive_distribution >= random_prob, 1, "first");
+
+    centroids(i,:) = data(next_centroid_index,1:784);
+
+end
+
+end
 
 %% Function to pick the Closest Centroid using norm/distance
 % This function takes two arguments, a vector and a set of centroids
