@@ -38,7 +38,7 @@ test=test(:,1:784);
 test(:,785)=zeros(200,1);
 
 %% After initializing, you will have the following variables in your workspace:
-% 1. train (a 1500 x 785 array, containins the 1500 training images)
+% 1. train (a 1500 x 785 array, containing the 1500 training images)
 % 2. test (a 200 x 785 array, containing the 200 testing images)
 % 3. correctlabels (a 200 x 1 array containing the correct labels (numerical
 % meaning) of the 200 test images
@@ -62,7 +62,7 @@ imagesc(testimage'); % this command plots an array as an image.  Type 'help imag
 
 %% This next section of code calls the three functions you are asked to specify
 
- k = 28; % set k
+k = 28; % set k
 max_iter = 100; % set the number of maximum potential iterations of the algorithm
 
 %% The next line initializes the centroids.  Look at the initialize_centroids()
@@ -202,7 +202,7 @@ y=centroids;
 
 end
 
-%% Initialize the centroids with k-mean++ algorithm
+%% Initialize the centroids with to favor further data points
 
 function centroids = initialize_spaced_centroids(data, num_centroids)
 
@@ -220,7 +220,6 @@ for i = 2:num_centroids
     next_centroid_index = find(cumaltive_distribution >= random_prob, 1, "first");
 
     centroids(i,:) = data(next_centroid_index,1:784);
-
 end
 
 end
