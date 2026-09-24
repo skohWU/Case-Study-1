@@ -47,12 +47,12 @@ test(:,785)=zeros(200,1);
 % to do this, you need to use the reshape command, along with the transpose
 % operation.  For example, the following lines plot the first test image
 
-figure;
-colormap('gray'); % this tells MATLAB to depict the image in grayscale
-testimage = reshape(test(1,[1:784]), [28 28]);
-% we are reshaping the first row of 'test', columns 1-784 (since the 785th
-% column is going to be used for storing the centroid assignment.
-imagesc(testimage'); % this command plots an array as an image.  Type 'help imagesc' to learn more.
+% figure;
+% colormap('gray'); % this tells MATLAB to depict the image in grayscale
+% testimage = reshape(test(1,[1:784]), [28 28]);
+% % we are reshaping the first row of 'test', columns 1-784 (since the 785th
+% % column is going to be used for storing the centroid assignment.
+% imagesc(testimage'); % this command plots an array as an image.  Type 'help imagesc' to learn more.
 
 %% After importing, the array 'train' consists of 1500 rows and 785 columns.
 % Each row corresponds to a different handwritten digit (28 x 28 = 784)
@@ -123,7 +123,7 @@ max_iter = 100; % set the number of maximum potential iterations of the algorith
         %disp("Centroid " + clusterIndex + " corresponds to " + centroidLabels(clusterIndex))
     end
     
-    save('classifierdata.mat', "centroids", "centroidLabels");
+    % save('classifierdata.mat', "centroids", "centroidLabels");
     %% Tests centroids against training set labels
     
     % loop through the test set, figure out the predicted number
@@ -165,6 +165,9 @@ max_iter = 100; % set the number of maximum potential iterations of the algorith
 figure;
 cost_iteration = cost_iteration(cost_iteration ~= 0);
 plot(1:iter, cost_iteration);
+title('Iteration Cost');
+xlabel('Iteration');
+ylabel('Cost');
 
 
 %% This next section of code will make a plot of all of the centroids
@@ -192,17 +195,7 @@ end
 % ***Feel free to experiment.***
 % Note that this function takes two inputs and emits one output (y).
 
-function y=initialize_centroids(data,num_centroids)
-
-random_index=randperm(size(data,1));
-
-centroids=data(random_index(1:num_centroids),:);
-
-y=centroids;
-
-end
-
-%% Initialize the centroids with to favor further data points
+% Initialize the centroids to favor further data points
 
 function centroids = initialize_spaced_centroids(data, num_centroids)
 

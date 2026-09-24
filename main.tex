@@ -1,0 +1,112 @@
+\documentclass[conference]{IEEEtran}
+%\IEEEoverridecommandlockouts
+% The preceding line is only needed to identify funding in the first footnote. If that is unneeded, please comment it out.
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{stfloats}
+
+\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+\begin{document}
+
+\title{Classifying Handwritten Digits with K-Means}
+
+\author{\IEEEauthorblockN{1\textsuperscript{st} Spencer Koh}
+\IEEEauthorblockA{\textit{Dept. of Elec. and Systems Eng.} \\
+\textit{Washington University in St. Louis}\\
+St Louis, USA \\
+koh.s@wustl.edu}
+\and
+\IEEEauthorblockN{2\textsuperscript{nd} Adan Mendoza}
+\IEEEauthorblockA{\textit{Dept. of Elec. and Systems Eng.} \\
+\textit{Washington University in St. Louis}\\
+St Louis, USA \\
+adanm@wustl.edu}
+}
+
+\maketitle
+
+\begin{abstract}
+This case study applies k-means, a clustering algorithm, to sort handwritten digits into groups. In this method, the number of clusters is referred to as k. We tested k values starting from 20 up to 100 and compared accuracy and runtime of the algorithm. Each group was labeled based on which digit it appeared most often, then tested against a separate set of images the algorithm had not seen before. In the end, we decided that the value of k = 28 gave the best results given how long it took to run. At this number, the algorithm correctly classified around \text{70\%} of the images in the training set, offering a balance between computation power and high classification accuracy. What stood out is that the algorithm separated the digits fairly well in the testing set based only on data that it had used from a different the training set. This suggests clustering methods like this could be useful in real-world settings where there is a sufficient sample of data that we want to use to group new data with.
+\end{abstract}
+
+\section{Introduction}
+Help the reader understand why your project is important and how it could enrich your knowledge of topics in ESE 105. End with a description of the exact goal(s) or outcome(s) that your project aims to achieve.
+
+Make this report as concise as possible -- aim for 2-3 pages. It must be no longer than 4 pages.
+
+\section{Methods}
+
+As mentioned previously our goal was to implement our own version of the k-means clustering algorithm to classify unknown handwritten digits. To do this we wrote our own functions to initialize centroids, assign vectors to centroids, and then adjust those centroids, as well as loop through the whole algorithm and test different k values.
+
+\subsection{Implementing K-Means}
+
+We changed the way the centroids were initialized to favor picking data points that were further away from the previously established centroids instead of picking k random data points. This was to avoid initializing with centroids that start too close together to try to make the ending centroids more unique. We accomplished this by weighting each vector based on it's minimum distances to the other centroids and then picked the random vector so that it would have a higher chance of being further away.
+
+Then we assigned each image vector the centroid with the lowest Euclidean distance and repeated that for all of the image vectors. Then we updated the centroids to be the average of all of the vectors in their respective clusters. Lastly, we repeated those steps until updating the centroids wouldn't change them from where they currently are, which means no vectors are changing clusters any more.
+
+
+
+\subsection{Classifying Centroids}
+
+Since we know what number each image actually corresponds to, we took the most common number in each cluster and assigned that value to that cluster's centroid. We did this automatically in Matlab instead of by hand to eliminate having to guess when a centroid looked like two different numbers. For example if the cluster contains enough threes, fives, and eights it could be hard to tell which one there are more of. This was also something we looked at when choosing our final set of centroids. Even though their values were being assigned automatically we wanted centroids that were for the most part unambiguous.
+
+\subsection{Choosing K Value}
+
+To choose our k value we iterated through the k-means clustering algorithm we wrote with k values ranging from 20 to 100. In each iteration we recorded the accuracy it had at classifying the training data as well as the runtime. We decided that a k of around 28 provided a good balance of accuracy while not taking too long to run. While higher k values generally offered more accurate classification of the training set, the computation power was significantly higher and raising the k would make the centroids more susceptible to overfitting the training data.
+
+\begin{figure}[tb]
+    \centering
+\includegraphics[width=\textwidth, height=0.2\textheight, keepaspectratio]{Figures/accuracy.png}
+\caption{Percent of training images correctly classified vs. number of centroids.}
+\end{figure}
+
+\begin{figure}[tb]
+    \centering
+\includegraphics[width=\textwidth, height=0.15\textheight, keepaspectratio]{Figures/time.png}
+\caption{Runtime for k-means clustering of training data vs. number of centroids.}
+\end{figure}
+
+\section{Results and Discussion}
+
+\subsection{Results}
+
+\begin{figure}[tb]
+    \centering
+\includegraphics[width=\textwidth, height=0.15\textheight, keepaspectratio]{Figures/centroids.png}
+\caption{Centroids}
+\label{centroids}
+\end{figure}
+
+\begin{figure*}[b]
+    \centering
+\includegraphics[width=.6\textwidth, height = 0.4\textheight, keepaspectratio]{Figures/classifications.png}
+\caption{Classification of digits}
+\end{figure*}
+
+
+\subsection{Outliers}
+
+\begin{figure}[tb]
+    \centering
+\includegraphics[width=\textwidth, height=0.2\textheight, keepaspectratio]{Figures/outliers.png}
+\caption{Outliers}
+\end{figure}
+
+\subsection{Misclassifications}
+
+\begin{figure}[tb]
+    \centering
+\includegraphics[width=\textwidth, height=0.15\textheight, keepaspectratio]{Figures/misclassifications.png}
+\caption{Misclassified digits}
+\end{figure}
+
+
+\section{Conclusion}
+Summarize your key findings. Include important conclusions that can be drawn. Discuss benefits or shortcomings of your work and suggest future related project ideas you might like to explore in the future.
+
+\end{document}
