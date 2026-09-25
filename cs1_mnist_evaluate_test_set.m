@@ -97,7 +97,7 @@ title('Predictions');
 %% The following line provides the number of instances where and entry in correctlabel is
 % equal to the corresponding entry in prediction
 % However, remember that some of these are outliers
-sum(correctlabels==predictions)
+disp("Accuracy: " + sum(correctlabels==predictions)/size(test,1));
 
 function [index, vec_distance] = assign_vector_to_centroid(data,centroids)
     num_centroids = size(centroids, 1);
